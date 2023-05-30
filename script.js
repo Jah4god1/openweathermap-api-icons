@@ -53,7 +53,7 @@ function forecast(lat, lon, city){
         let tempEl = document.createElement("card-body");
         tempEl.textContent = `Temp: ${data.list[0].main.temp}F`
         oneDay.append(tempEl)
-        console.log(data.weather)
+        
 
     })
     .catch(error => {
@@ -63,6 +63,12 @@ function forecast(lat, lon, city){
 }
 
 searchButton.addEventListener("click", findCity)
+function myfunc (event) {
+    event.preventDefault();
+
+    var getInput = document.getElementById('#myInput')
+    console.log('#myInput');
+}
 
     function populateWeatherIconAndTemperature(lat, lon, city) {
         const apiUrl =  `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
