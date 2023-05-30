@@ -3,6 +3,13 @@ const apiKey = '192e78d561eb519b938c8301a6e04bd5';
 const myInput = document.querySelector ("#myInput")
 const searchButton = document.querySelector ("#search-button")
 const oneDay = document.querySelector ("#one-day")
+const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=&lon=&units=imperial&appid=${'192e78d561eb519b938c8301a6e04bd5'}`
+
+async function getData(){
+const response = await fetch(apiUrl);
+const data = await response.json();
+console.log(data);
+}
 
 function findCity(e){
     e.preventDefault();
@@ -30,12 +37,12 @@ function latLon(city){
         console.error(error);
 
 
-    });
+    })
 }
 
 
 function forecast(lat, lon, city){
-   const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`
+   const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${'192e78d561eb519b938c8301a6e04bd5'}`
     // const apiUrl = `https://api.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=7&appid=${apiKey}`
     fetch(apiUrl)
     .then(response => response.json())
@@ -43,9 +50,10 @@ function forecast(lat, lon, city){
         // Handle the API response data
         console.log(data);
         // let temp = data.list[0].main.temp;
-        let tempEl = document.createElement('p');
+        let tempEl = document.createElement("card-body");
         tempEl.textContent = `Temp: ${data.list[0].main.temp}F`
         oneDay.append(tempEl)
+        console.log(data.weather)
 
     })
     .catch(error => {
@@ -57,12 +65,12 @@ function forecast(lat, lon, city){
 searchButton.addEventListener("click", findCity)
 
     function populateWeatherIconAndTemperature(lat, lon, city) {
-        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&q=${city}&appid=${apiKey}`;
-       
+        const apiUrl =  `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+        
         fetch(apiUrl)
           .then(response => response.json())
           .then(data => {
-            const weatherCode = data.list.weather.icon[0];
+            const weatherCode = data.list[0].weather[0].icon;
             const temperature = Math.round(data.list.main.temp - 273.15); // Convert temperature from Kelvin to Celsius
             const weatherIconSrc = `https://openweathermap.org/img/wn/${weatherCode}.png`;
             const weatherIcon = $('<img>').attr('src', weatherIconSrc);
@@ -71,8 +79,26 @@ searchButton.addEventListener("click", findCity)
             $('#temperature').text(`Temperature: ${temperature}°C`);
           });
       }
-      searchButton.addEventListener("click", populateWeatherIconAndTemperature)
+    
+      
+      showWeather: (resp) => {
+        console.log(resp);
+        let row = document.querySelector('weather.row');
 
-      let locationIcon = document.querySelector('.weather-icon');
-      const {icon} = data.weather[0];
-      locationIcon.innerHTML = `<img src="icons/${icon}.png">`;
+        row.innerHtml = resp.daily.map(day => {
+            return  '<div id="one-day"></div>'
+        })
+        .join(' ');
+
+        let html = ` <div class="col">
+        <div class="card" style="width: 30vw">
+          <h5 class="card-title p-2">Date</h5>
+    <img
+          src="http://openweathermap.org/img/wn/10d@4x.png"
+          class="card-img-top"
+          alt="Weather description"
+        />
+        <div class="card-body">
+          <h3 class="card-title"><div id="one-day"></div></h3>
+          <p class="card-text">High Temp Low Temp</p>`
+      }
